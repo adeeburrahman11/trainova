@@ -12,16 +12,54 @@ class TrackScreen extends StatefulWidget {
 class _TrackScreenState extends State<TrackScreen> {
   final List<TrackedExercise> _exercises = [];
   late DateTime _startTime;
+  bool _isWorkoutActive = false;
+  String _workoutTitle = 'Freestyle Workout';
 
-  @override
-  void initState() {
-    super.initState();
-    _startTime = DateTime.now();
-  }
+  final List<Map<String, dynamic>> _presets = [
+    {
+      'title': 'Push Day',
+      'subtitle': 'Chest, Shoulders & Triceps',
+      'exercises': ['Barbell Bench Press', 'Incline Dumbbell Press', 'Tricep Rope Pushdown']
+    },
+    {
+      'title': 'Pull Day',
+      'subtitle': 'Back & Biceps',
+      'exercises': ['Pull-Up', 'Barbell Row', 'Barbell Bicep Curl']
+    },
+    {
+      'title': 'Leg Day',
+      'subtitle': 'Quads, Hamstrings & Glutes',
+      'exercises': ['Barbell Back Squat', 'Leg Press', 'Romanian Deadlift (RDL)']
+    },
+  ];
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _startPresetWorkout(Map<String, dynamic> preset) {
+    setState(() {
+      _workoutTitle = preset['title'];
+      _exercises.clear();
+      for (String exName in preset['exercises']) {
+        _exercises.add(TrackedExercise(
+          name: exName,
+          sets: [ExerciseSet(), ExerciseSet(), ExerciseSet()], // prefill 3 sets
+        ));
+      }
+      _startTime = DateTime.now();
+      _isWorkoutActive = true;
+    });
+  }
+
+  void _startEmptyWorkout() {
+    setState(() {
+      _workoutTitle = 'Freestyle Workout';
+      _exercises.clear();
+      _startTime = DateTime.now();
+      _isWorkoutActive = true;
+    });
   }
 
   void _addExercise() {
@@ -34,7 +72,7 @@ class _TrackScreenState extends State<TrackScreen> {
           title: const Text('Add Exercise'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(hintText: 'e.g. Bench Press'),
+            decoration: const InputDecoration(hintText: 'e.g. Lunges'),
             autofocus: true,
             textCapitalization: TextCapitalization.words,
           ),
@@ -101,10 +139,9 @@ class _TrackScreenState extends State<TrackScreen> {
             onPressed: () {
               Navigator.pop(context);
               setState(() {
-                // Save out the session
                 final session = WorkoutSession(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  title: 'Tracked Workout',
+                  title: _workoutTitle,
                   date: DateTime.now(),
                   durationSeconds: DateTime.now().difference(_startTime).inSeconds,
                   exercises: List.from(_exercises), // copy
@@ -112,7 +149,7 @@ class _TrackScreenState extends State<TrackScreen> {
                 WorkoutState.instance.addSession(session);
 
                 _exercises.clear();
-                _startTime = DateTime.now(); // reset
+                _isWorkoutActive = false; 
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Workout saved successfully!')),
@@ -128,12 +165,94 @@ class _TrackScreenState extends State<TrackScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isWorkoutActive) {
+      return _buildPresetSelectionMode(context);
+    }
+    return _buildActiveWorkoutMode(context);
+  }
+
+  Widget _buildPresetSelectionMode(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Active Workout', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Start Workout', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton(
+              onPressed: _startEmptyWorkout,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.black,
+                minimumSize: const Size.fromHeight(60),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: const Text('START EMPTY WORKOUT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            ),
+            const SizedBox(height: 32),
+            const Text('Routines', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _presets.length,
+                itemBuilder: (context, index) {
+                  final preset = _presets[index];
+                  return GestureDetector(
+                    onTap: () => _startPresetWorkout(preset),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(preset['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)),
+                              const SizedBox(height: 4),
+                              Text(preset['subtitle'], style: const TextStyle(color: Colors.white54, fontSize: 14)),
+                            ],
+                          ),
+                          Icon(Icons.play_circle_fill, color: Theme.of(context).colorScheme.primary, size: 36),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActiveWorkoutMode(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_workoutTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Cancel current workout securely
+            setState(() {
+              _isWorkoutActive = false;
+            });
+          },
+        ),
         actions: [
           TextButton(
             onPressed: _finishWorkout,
