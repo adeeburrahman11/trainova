@@ -6,7 +6,9 @@ import '../widgets/progress_modal.dart';
 import 'exercise_detail_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final Function(int)? onNavigate;
+
+  const DashboardScreen({super.key, this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +52,19 @@ class DashboardScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 Row(
                   children: [
-                    Expanded(child: _buildActionCard(context, 'Start Workout', Icons.play_arrow_rounded, Theme.of(context).colorScheme.primary)),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => onNavigate?.call(1),
+                        child: _buildActionCard(context, 'Start Workout', Icons.play_arrow_rounded, Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
                     const SizedBox(width: 16),
-                    Expanded(child: _buildActionCard(context, 'Quick Timer', Icons.timer_rounded, Colors.orangeAccent)),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => onNavigate?.call(3),
+                        child: _buildActionCard(context, 'Quick Timer', Icons.timer_rounded, Colors.orangeAccent),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),

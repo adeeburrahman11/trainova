@@ -52,20 +52,26 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const DashboardScreen(),
-    const TrackScreen(),
-    const HistoryScreen(),
-    const TimerScreen(),
-    const LibraryScreen(),
-  ];
+  void _navigate(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final screens = [
+      DashboardScreen(onNavigate: _navigate),
+      const TrackScreen(),
+      const HistoryScreen(),
+      const TimerScreen(),
+      const LibraryScreen(),
+    ];
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: _screens,
+        children: screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
