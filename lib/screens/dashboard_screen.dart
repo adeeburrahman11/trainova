@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import '../state/workout_state.dart';
 import '../models/workout.dart';
 import '../widgets/progress_modal.dart';
 import 'exercise_detail_screen.dart';
+import 'profile_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Function(int)? onNavigate;
@@ -25,9 +27,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
-          'Hi, Athlete',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+        title: ListenableBuilder(
+          listenable: WorkoutState.instance,
+          builder: (context, _) {
+            return Text(
+              'Hi, ${WorkoutState.instance.profile.name}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+            );
+          }
         ),
         actions: [
           IconButton(
@@ -81,9 +88,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               );
             },
           ),
-          const CircleAvatar(
-            backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=11'),
-            radius: 18,
+          ListenableBuilder(
+            listenable: WorkoutState.instance,
+            builder: (context, _) {
+              final photoPath = WorkoutState.instance.profile.profilePhotoPath;
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                },
+                child: CircleAvatar(
+                  backgroundImage: photoPath != null ? FileImage(File(photoPath)) as ImageProvider : const NetworkImage('https://i.pravatar.cc/150?img=11'),
+                  radius: 18,
+                ),
+              );
+            }
           ),
           const SizedBox(width: 16),
         ],
@@ -94,8 +112,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           final history = WorkoutState.instance.history;
           final now = DateTime.now();
           final weeklyWorkouts = history.where((w) => now.difference(w.date).inDays <= 7).length;
-          const goal = 5;
-          final progress = (weeklyWorkouts / goal).clamp(0.0, 1.0);
+          final goal = WorkoutState.instance.profile.weeklyGoalDays;
+          final progress = goal > 0 ? (weeklyWorkouts / goal).clamp(0.0, 1.0) : 0.0;
 
           final featuredExercise = ExerciseDatabase.allExercises[now.day % ExerciseDatabase.allExercises.length];
 
