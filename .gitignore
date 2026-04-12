@@ -43,3 +43,24 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Security / Secrets
+*.env
+.env*
+android/key.properties
+key.properties
+
+# iOS Build outputs & CocoaPods
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/Flutter.framework/
+/ios/Flutter/Flutter.podspec
+
+# Windows/Mac/Linux build outputs
+/windows/flutter/ephemeral/
+/macos/Flutter/ephemeral/
+/linux/flutter/ephemeral/
+
+# Generated plugins
+.flutter-plugins
+.flutter-plugins-dependencies
