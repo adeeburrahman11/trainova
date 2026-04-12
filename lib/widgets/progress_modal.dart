@@ -25,6 +25,8 @@ class ProgressModal extends StatefulWidget {
 class _ProgressModalState extends State<ProgressModal> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ImagePicker _picker = ImagePicker();
+  final weightController = TextEditingController();
+  final bfController = TextEditingController();
 
   Color get primaryColor => Theme.of(context).colorScheme.primary;
 
@@ -32,6 +34,14 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    weightController.dispose();
+    bfController.dispose();
+    super.dispose();
   }
 
   @override
@@ -85,11 +95,13 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
   }
 
   Widget _buildMetricsTab(BuildContext context) {
-    final weightController = TextEditingController();
-    final bfController = TextEditingController();
-
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(
+        left: 24.0,
+        top: 24.0,
+        right: 24.0,
+        bottom: 24.0 + MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -152,14 +164,15 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
           const SizedBox(height: 32),
           const Text('Recent Entries', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: WorkoutState.instance,
-              builder: (context, _) {
-                final logs = WorkoutState.instance.progressLogs;
-                if (logs.isEmpty) return const Center(child: Text('No entries yet.', style: TextStyle(color: Colors.white54)));
+          ListenableBuilder(
+            listenable: WorkoutState.instance,
+            builder: (context, _) {
+              final logs = WorkoutState.instance.progressLogs;
+              if (logs.isEmpty) return const Center(child: Padding(padding: EdgeInsets.all(16), child: Text('No entries yet.', style: TextStyle(color: Colors.white54))));
 
-                return ListView.builder(
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                   itemCount: logs.length,
                   itemBuilder: (context, index) {
                     final log = logs[index];
@@ -174,7 +187,6 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                 );
               },
             ),
-          ),
         ],
       ),
     );
@@ -272,12 +284,15 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
     try {
       final XFile? image = await _picker.pickImage(source: source);
       if (image != null) {
-        // Add a quick metric log just to attach the photo
+        final logs = WorkoutState.instance.progressLogs;
+        final recentWeight = logs.isNotEmpty ? logs.first.weight : 0.0;
+        final recentBf = logs.isNotEmpty ? logs.first.bodyFat : 0.0;
+
         final log = ProgressLog(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           date: DateTime.now(),
-          weight: 0, // In a full app, this would prompt for weight
-          bodyFat: 0,
+          weight: recentWeight,
+          bodyFat: recentBf,
           photos: [image],
         );
         WorkoutState.instance.addProgressLog(log);
