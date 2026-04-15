@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/workout.dart';
 import '../state/workout_state.dart';
@@ -14,6 +15,8 @@ class _TrackScreenState extends State<TrackScreen> {
   late DateTime _startTime;
   bool _isWorkoutActive = false;
   String _workoutTitle = 'Freestyle Workout';
+  Timer? _timer;
+  Duration _elapsed = Duration.zero;
 
   final List<Map<String, dynamic>> _presets = [
     {
@@ -35,7 +38,20 @@ class _TrackScreenState extends State<TrackScreen> {
 
   @override
   void dispose() {
+    _timer?.cancel();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _elapsed = Duration.zero;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          _elapsed = DateTime.now().difference(_startTime);
+        });
+      }
+    });
   }
 
   void _startPresetWorkout(Map<String, dynamic> preset) {
@@ -50,16 +66,49 @@ class _TrackScreenState extends State<TrackScreen> {
       }
       _startTime = DateTime.now();
       _isWorkoutActive = true;
+      _startTimer();
     });
   }
 
   void _startEmptyWorkout() {
-    setState(() {
-      _workoutTitle = 'Freestyle Workout';
-      _exercises.clear();
-      _startTime = DateTime.now();
-      _isWorkoutActive = true;
-    });
+    TextEditingController controller = TextEditingController(text: 'Freestyle Workout');
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          title: const Text('Workout Name'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'e.g. Back & Biceps'),
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  setState(() {
+                    _workoutTitle = controller.text.trim();
+                    _exercises.clear();
+                    _startTime = DateTime.now();
+                    _isWorkoutActive = true;
+                    _startTimer();
+                  });
+                  Navigator.pop(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+              child: const Text('Start', style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _addExercise() {
@@ -150,6 +199,7 @@ class _TrackScreenState extends State<TrackScreen> {
 
                 _exercises.clear();
                 _isWorkoutActive = false; 
+                _timer?.cancel();
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Workout saved successfully!')),
@@ -240,7 +290,20 @@ class _TrackScreenState extends State<TrackScreen> {
   Widget _buildActiveWorkoutMode(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_workoutTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Column(
+          children: [
+            Text(_workoutTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(
+              '${_elapsed.inMinutes.toString().padLeft(2, '0')}:${(_elapsed.inSeconds % 60).toString().padLeft(2, '0')}', 
+              style: TextStyle(
+                fontSize: 28, // Dramatically increased
+                color: Theme.of(context).colorScheme.primary, 
+                fontWeight: FontWeight.w900, // Thicker
+                letterSpacing: 2.0, // More spaced
+              ),
+            ),
+          ],
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -250,6 +313,7 @@ class _TrackScreenState extends State<TrackScreen> {
             // Cancel current workout securely
             setState(() {
               _isWorkoutActive = false;
+              _timer?.cancel();
             });
           },
         ),
@@ -315,7 +379,9 @@ class _TrackScreenState extends State<TrackScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${exerciseIndex + 1}. ${exercise.name}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Text('${exerciseIndex + 1}. ${exercise.name}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              ),
               IconButton(
                 icon: const Icon(Icons.close, color: Colors.redAccent),
                 onPressed: () {
