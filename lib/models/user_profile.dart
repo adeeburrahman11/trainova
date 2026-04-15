@@ -32,4 +32,26 @@ class UserProfile {
       profilePhotoPath: profilePhotoPath ?? this.profilePhotoPath,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'age': age,
+      'weight': weight,
+      'height': height,
+      'weeklyGoalDays': weeklyGoalDays,
+      'profilePhotoPath': profilePhotoPath,
+    };
+  }
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      name: json['name'] as String,
+      age: json['age'] as int,
+      weight: (json['weight'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
+      weeklyGoalDays: json['weeklyGoalDays'] as int,
+      profilePhotoPath: json['profilePhotoPath'] as String?,
+    );
+  }
 }

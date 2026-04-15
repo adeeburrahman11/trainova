@@ -7,7 +7,11 @@ import 'screens/history_screen.dart';
 import 'screens/timer_screen.dart';
 import 'screens/library_screen.dart';
 
-void main() {
+import 'state/workout_state.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await WorkoutState.instance.loadState();
   runApp(const TrainovaApp());
 }
 

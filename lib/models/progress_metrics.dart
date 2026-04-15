@@ -14,6 +14,26 @@ class ProgressLog {
     required this.bodyFat,
     this.photos = const [],
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date.toIso8601String(),
+      'weight': weight,
+      'bodyFat': bodyFat,
+      'photos': photos.map((p) => p.path).toList(),
+    };
+  }
+
+  factory ProgressLog.fromJson(Map<String, dynamic> json) {
+    return ProgressLog(
+      id: json['id'] as String,
+      date: DateTime.parse(json['date'] as String),
+      weight: (json['weight'] as num).toDouble(),
+      bodyFat: (json['bodyFat'] as num).toDouble(),
+      photos: (json['photos'] as List? ?? []).map((p) => XFile(p as String)).toList(),
+    );
+  }
 }
 
 class AnalyticsEngine {
