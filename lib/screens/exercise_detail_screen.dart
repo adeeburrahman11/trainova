@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/exercise_database.dart';
+import '../state/workout_state.dart';
+import '../models/workout.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
   final ExerciseDef exercise;
@@ -74,11 +76,40 @@ class ExerciseDetailScreen extends StatelessWidget {
                   const SizedBox(height: 48),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      // In a real app, this might switch to the Track tab and add it.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${exercise.name} added to next workout!')),
-                      );
+                      if (WorkoutState.instance.isWorkoutActive) {
+                        WorkoutState.instance.addActiveExercise(TrackedExercise(name: exercise.name, sets: [ExerciseSet()]));
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${exercise.name} added to current workout!')),
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Theme.of(context).colorScheme.surface,
+                            title: const Text('No Active Workout'),
+                            content: const Text('You don\'t have a workout currently running. Start a Freestyle Workout with this exercise?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context); // close dialog
+                                  Navigator.pop(context); // close detail screen
+                                  WorkoutState.instance.startActiveWorkout(
+                                    'Freestyle Workout', 
+                                    exercises: [TrackedExercise(name: exercise.name, sets: [ExerciseSet()])]
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+                                child: const Text('Start', style: TextStyle(color: Colors.black)),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
