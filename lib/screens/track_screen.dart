@@ -11,10 +11,6 @@ class TrackScreen extends StatefulWidget {
 }
 
 class _TrackScreenState extends State<TrackScreen> {
-  final List<TrackedExercise> _exercises = [];
-  late DateTime _startTime;
-  bool _isWorkoutActive = false;
-  String _workoutTitle = 'Freestyle Workout';
   Timer? _timer;
   Duration _elapsed = Duration.zero;
 
@@ -34,6 +30,16 @@ class _TrackScreenState extends State<TrackScreen> {
       'subtitle': 'Quads, Hamstrings & Glutes',
       'exercises': ['Barbell Back Squat', 'Leg Press', 'Romanian Deadlift (RDL)']
     },
+    {
+      'title': 'Core Day',
+      'subtitle': 'Abs & Obliques',
+      'exercises': ['Crunches', 'Plank', 'Russian Twists', 'Leg Raises']
+    },
+    {
+      'title': 'Full Body',
+      'subtitle': 'Compound Movements',
+      'exercises': ['Barbell Back Squat', 'Barbell Bench Press', 'Barbell Row', 'Overhead Press']
+    },
   ];
 
   @override
@@ -46,28 +52,27 @@ class _TrackScreenState extends State<TrackScreen> {
     _elapsed = Duration.zero;
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted) {
+      if (mounted && WorkoutState.instance.isWorkoutActive) {
         setState(() {
-          _elapsed = DateTime.now().difference(_startTime);
+          _elapsed = DateTime.now().difference(WorkoutState.instance.activeStartTime ?? DateTime.now());
         });
+      } else {
+        _timer?.cancel();
+        _timer = null;
       }
     });
   }
 
   void _startPresetWorkout(Map<String, dynamic> preset) {
-    setState(() {
-      _workoutTitle = preset['title'];
-      _exercises.clear();
-      for (String exName in preset['exercises']) {
-        _exercises.add(TrackedExercise(
-          name: exName,
-          sets: [ExerciseSet(), ExerciseSet(), ExerciseSet()], // prefill 3 sets
-        ));
-      }
-      _startTime = DateTime.now();
-      _isWorkoutActive = true;
-      _startTimer();
-    });
+    List<TrackedExercise> initialEx = [];
+    for (String exName in preset['exercises']) {
+      initialEx.add(TrackedExercise(
+        name: exName,
+        sets: [ExerciseSet(), ExerciseSet(), ExerciseSet()], // prefill 3 sets
+      ));
+    }
+    WorkoutState.instance.startActiveWorkout(preset['title'], exercises: initialEx);
+    _startTimer();
   }
 
   void _startEmptyWorkout() {
@@ -92,13 +97,8 @@ class _TrackScreenState extends State<TrackScreen> {
             ElevatedButton(
               onPressed: () {
                 if (controller.text.trim().isNotEmpty) {
-                  setState(() {
-                    _workoutTitle = controller.text.trim();
-                    _exercises.clear();
-                    _startTime = DateTime.now();
-                    _isWorkoutActive = true;
-                    _startTimer();
-                  });
+                  WorkoutState.instance.startActiveWorkout(controller.text.trim());
+                  _startTimer();
                   Navigator.pop(context);
                 }
               },
@@ -133,12 +133,10 @@ class _TrackScreenState extends State<TrackScreen> {
             ElevatedButton(
               onPressed: () {
                 if (controller.text.trim().isNotEmpty) {
-                  setState(() {
-                    _exercises.add(TrackedExercise(
-                      name: controller.text.trim(),
-                      sets: [ExerciseSet()], // initial empty set
-                    ));
-                  });
+                  WorkoutState.instance.addActiveExercise(TrackedExercise(
+                    name: controller.text.trim(),
+                    sets: [ExerciseSet()], // initial empty set
+                  ));
                   Navigator.pop(context);
                 }
               },
@@ -149,27 +147,6 @@ class _TrackScreenState extends State<TrackScreen> {
         );
       },
     );
-  }
-
-  void _addSet(int exerciseIndex) {
-    setState(() {
-      _exercises[exerciseIndex].sets.add(ExerciseSet());
-    });
-  }
-
-  void _removeSet(int exerciseIndex, int setIndex) {
-    setState(() {
-      _exercises[exerciseIndex].sets.removeAt(setIndex);
-      if (_exercises[exerciseIndex].sets.isEmpty) {
-        _exercises.removeAt(exerciseIndex);
-      }
-    });
-  }
-
-  void _toggleSetCompleted(int exerciseIndex, int setIndex) {
-    setState(() {
-      _exercises[exerciseIndex].sets[setIndex].isCompleted = !_exercises[exerciseIndex].sets[setIndex].isCompleted;
-    });
   }
 
   void _finishWorkout() {
@@ -187,20 +164,9 @@ class _TrackScreenState extends State<TrackScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              setState(() {
-                final session = WorkoutSession(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  title: _workoutTitle,
-                  date: DateTime.now(),
-                  durationSeconds: DateTime.now().difference(_startTime).inSeconds,
-                  exercises: List.from(_exercises), // copy
-                );
-                WorkoutState.instance.addSession(session);
-
-                _exercises.clear();
-                _isWorkoutActive = false; 
-                _timer?.cancel();
-              });
+              WorkoutState.instance.finishActiveWorkout(_elapsed.inSeconds);
+              _timer?.cancel();
+              _timer = null;
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Workout saved successfully!')),
               );
@@ -215,10 +181,22 @@ class _TrackScreenState extends State<TrackScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isWorkoutActive) {
-      return _buildPresetSelectionMode(context);
-    }
-    return _buildActiveWorkoutMode(context);
+    return ListenableBuilder(
+      listenable: WorkoutState.instance,
+      builder: (context, child) {
+        // Just in case it was started externally (from Library tab) and track screen mounts
+        if (WorkoutState.instance.isWorkoutActive && _timer == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && _timer == null) _startTimer();
+          });
+        }
+        
+        if (!WorkoutState.instance.isWorkoutActive) {
+          return _buildPresetSelectionMode(context);
+        }
+        return _buildActiveWorkoutMode(context);
+      },
+    );
   }
 
   Widget _buildPresetSelectionMode(BuildContext context) {
@@ -288,11 +266,12 @@ class _TrackScreenState extends State<TrackScreen> {
   }
 
   Widget _buildActiveWorkoutMode(BuildContext context) {
+    final activeExercises = WorkoutState.instance.activeExercises;
     return Scaffold(
       appBar: AppBar(
         title: Column(
           children: [
-            Text(_workoutTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(WorkoutState.instance.activeWorkoutTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
             Text(
               '${_elapsed.inMinutes.toString().padLeft(2, '0')}:${(_elapsed.inSeconds % 60).toString().padLeft(2, '0')}', 
               style: TextStyle(
@@ -310,11 +289,9 @@ class _TrackScreenState extends State<TrackScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Cancel current workout securely
-            setState(() {
-              _isWorkoutActive = false;
-              _timer?.cancel();
-            });
+            WorkoutState.instance.cancelActiveWorkout();
+            _timer?.cancel();
+            _timer = null;
           },
         ),
         actions: [
@@ -331,7 +308,7 @@ class _TrackScreenState extends State<TrackScreen> {
           children: [
             const SizedBox(height: 8),
             Expanded(
-              child: _exercises.isEmpty
+              child: activeExercises.isEmpty
                   ? const Center(
                       child: Text(
                         "No exercises added yet.\nLet's get training!",
@@ -340,7 +317,7 @@ class _TrackScreenState extends State<TrackScreen> {
                       ),
                     )
                   : ListView.builder(
-                      itemCount: _exercises.length,
+                      itemCount: activeExercises.length,
                       itemBuilder: (context, index) {
                         return _buildExerciseCard(context, index);
                       },
@@ -364,7 +341,8 @@ class _TrackScreenState extends State<TrackScreen> {
   }
 
   Widget _buildExerciseCard(BuildContext context, int exerciseIndex) {
-    final exercise = _exercises[exerciseIndex];
+    if (exerciseIndex >= WorkoutState.instance.activeExercises.length) return const SizedBox();
+    final exercise = WorkoutState.instance.activeExercises[exerciseIndex];
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -386,7 +364,7 @@ class _TrackScreenState extends State<TrackScreen> {
                 icon: const Icon(Icons.close, color: Colors.redAccent),
                 onPressed: () {
                   setState(() {
-                    _exercises.removeAt(exerciseIndex);
+                    WorkoutState.instance.activeExercises.removeAt(exerciseIndex);
                   });
                 },
               ),
@@ -409,7 +387,7 @@ class _TrackScreenState extends State<TrackScreen> {
           }),
           const SizedBox(height: 16),
           ElevatedButton.icon(
-            onPressed: () => _addSet(exerciseIndex),
+            onPressed: () => WorkoutState.instance.addSetToActiveExercise(exerciseIndex),
             icon: const Icon(Icons.add, color: Colors.white),
             label: const Text('Add Set', style: TextStyle(color: Colors.white)),
             style: ElevatedButton.styleFrom(
@@ -424,14 +402,17 @@ class _TrackScreenState extends State<TrackScreen> {
   }
 
   Widget _buildSetRow(BuildContext context, int exerciseIndex, int setIndex) {
-    final set = _exercises[exerciseIndex].sets[setIndex];
+    if (exerciseIndex >= WorkoutState.instance.activeExercises.length) return const SizedBox();
+    if (setIndex >= WorkoutState.instance.activeExercises[exerciseIndex].sets.length) return const SizedBox();
+    
+    final set = WorkoutState.instance.activeExercises[exerciseIndex].sets[setIndex];
     final isCompleted = set.isCompleted;
 
     Color checkColor = isCompleted ? Theme.of(context).colorScheme.primary : Colors.white24;
     Color rowBg = isCompleted ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1) : Colors.transparent;
 
     return Dismissible(
-      key: ValueKey('${exerciseIndex}_${setIndex}_${DateTime.now().microsecondsSinceEpoch}'),
+      key: ValueKey('${exerciseIndex}_${setIndex}_${set.hashCode}'),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -440,7 +421,9 @@ class _TrackScreenState extends State<TrackScreen> {
         decoration: BoxDecoration(color: Colors.redAccent, borderRadius: BorderRadius.circular(12)),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
-      onDismissed: (_) => _removeSet(exerciseIndex, setIndex),
+      onDismissed: (_) {
+         WorkoutState.instance.removeSetFromActiveExercise(exerciseIndex, setIndex);
+      },
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -492,7 +475,7 @@ class _TrackScreenState extends State<TrackScreen> {
             ),
             IconButton(
               icon: Icon(Icons.check_circle, color: checkColor),
-              onPressed: () => _toggleSetCompleted(exerciseIndex, setIndex),
+              onPressed: () => WorkoutState.instance.toggleActiveSetCompleted(exerciseIndex, setIndex),
             ),
           ],
         ),

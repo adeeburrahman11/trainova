@@ -69,6 +69,69 @@ class WorkoutState extends ChangeNotifier {
     _saveState();
     notifyListeners();
   }
+
+  // --- ACTIVE WORKOUT STATE LIFTS ---
+  bool isWorkoutActive = false;
+  String activeWorkoutTitle = '';
+  DateTime? activeStartTime;
+  final List<TrackedExercise> activeExercises = [];
+
+  void startActiveWorkout(String title, {List<TrackedExercise>? exercises}) {
+    isWorkoutActive = true;
+    activeWorkoutTitle = title;
+    activeStartTime = DateTime.now();
+    activeExercises.clear();
+    if (exercises != null) {
+      activeExercises.addAll(exercises);
+    }
+    notifyListeners();
+  }
+
+  void cancelActiveWorkout() {
+    isWorkoutActive = false;
+    activeWorkoutTitle = '';
+    activeStartTime = null;
+    activeExercises.clear();
+    notifyListeners();
+  }
+
+  void finishActiveWorkout(int durationSeconds) {
+    if (!isWorkoutActive) return;
+    final session = WorkoutSession(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: activeWorkoutTitle,
+      date: activeStartTime ?? DateTime.now(),
+      durationSeconds: durationSeconds,
+      exercises: List.from(activeExercises),
+    );
+    addSession(session);
+    cancelActiveWorkout();
+  }
+
+  void addActiveExercise(TrackedExercise exercise) {
+    activeExercises.add(exercise);
+    notifyListeners();
+  }
+
+  void addSetToActiveExercise(int exerciseIndex) {
+    activeExercises[exerciseIndex].sets.add(ExerciseSet());
+    notifyListeners();
+  }
+
+  void removeSetFromActiveExercise(int exerciseIndex, int setIndex) {
+    activeExercises[exerciseIndex].sets.removeAt(setIndex);
+    if (activeExercises[exerciseIndex].sets.isEmpty) {
+      activeExercises.removeAt(exerciseIndex);
+    }
+    notifyListeners();
+  }
+
+  void toggleActiveSetCompleted(int exerciseIndex, int setIndex) {
+    var setRef = activeExercises[exerciseIndex].sets[setIndex];
+    setRef.isCompleted = !setRef.isCompleted;
+    notifyListeners();
+  }
 }
+
 
 
