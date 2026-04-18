@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../state/workout_state.dart';
 
@@ -10,6 +13,57 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _isCheckingUpdate = false;
+
+  Future<void> _checkForUpdate() async {
+    setState(() => _isCheckingUpdate = true);
+    try {
+      final response = await http.get(Uri.parse('https://api.github.com/repos/adeeburrahman11/trainova/releases/latest'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final latestVersion = data['tag_name'].toString().replaceAll('v', '');
+        final releaseUrl = data['html_url'];
+        
+        String currentVersion = '1.0.0';
+        try {
+          final packageInfo = await PackageInfo.fromPlatform();
+          if (packageInfo.version.isNotEmpty) currentVersion = packageInfo.version;
+        } catch (_) {} // Handle MissingPluginException if session isn't restarted
+
+        if (!mounted) return;
+        
+        if (latestVersion != currentVersion) {
+          showDialog(context: context, builder: (context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            title: Text('Update Available!'),
+            content: Text('A new version ($latestVersion) is available on GitHub. You are running $currentVersion.'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: Text('Later', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)))),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  final url = Uri.parse(releaseUrl);
+                  if (await canLaunchUrl(url)) await launchUrl(url);
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+                child: Text('Download', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              )
+            ]
+          ));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Trainova is up to date!')));
+        }
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to check for updates. Status: ${response.statusCode}')));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Network error checking for updates.')));
+    } finally {
+      if (mounted) setState(() => _isCheckingUpdate = false);
+    }
+  }
 
   void _changeMeasurementSystem(bool newIsMetric) {
     final currentProfile = WorkoutState.instance.profile;
@@ -255,6 +309,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             );
                           },
                         ),
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), height: 1),
+                      ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        leading: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.system_update_alt_rounded, color: Theme.of(context).colorScheme.primary),
+                        ),
+                        title: Text('Check for Updates', style: TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: _isCheckingUpdate 
+                            ? SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                            : Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
+                        onTap: _isCheckingUpdate ? null : _checkForUpdate,
                       ),
                     ],
                   ),
