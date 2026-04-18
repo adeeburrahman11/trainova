@@ -53,6 +53,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Trainova is up to date!')));
         }
+      } else if (response.statusCode == 404) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No releases published yet on GitHub!')));
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to check for updates. Status: ${response.statusCode}')));
