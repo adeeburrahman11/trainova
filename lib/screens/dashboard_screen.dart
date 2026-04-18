@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +10,7 @@ import 'exercise_detail_screen.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'favourites_screen.dart';
+import 'feature_request_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Function(int)? onNavigate;
@@ -35,7 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           builder: (context, _) {
             return Text(
               'Hi, ${WorkoutState.instance.profile.name}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
             );
           },
         ),
@@ -45,7 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               isLabelVisible: _hasUnreadNotification,
               smallSize: 8,
               backgroundColor: Colors.redAccent,
-              child: const Icon(Icons.notifications_none_rounded),
+              child: Icon(Icons.notifications_none_rounded),
             ),
             onPressed: () {
               setState(() {
@@ -56,10 +56,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     backgroundColor: Theme.of(context).colorScheme.surface,
-                    title: const Text('New Notification'),
+                    title: Text('New Notification'),
                     content: Text.rich(
                       TextSpan(
-                        style: const TextStyle(color: Colors.white70),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70)),
                         children: [
                           const TextSpan(
                             text:
@@ -88,18 +88,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     actions: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(
+                          Navigator.of(context).pop(); // Close notification dialog
+                          Navigator.push(
                             context,
-                          ).pop(); // Close notification dialog
-                          _showFeedbackForm(context); // Open feedback form
+                            MaterialPageRoute(builder: (context) => const FeatureRequestScreen()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.white,
+                          foregroundColor: Theme.of(context).colorScheme.onSurface,
                           elevation: 0,
-                          side: const BorderSide(color: Colors.white24),
+                          side: BorderSide(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24)),
                         ),
-                        child: const Text('Give Feedback'),
+                        child: Text('Give Feedback'),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -111,7 +112,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ).colorScheme.primary,
                           foregroundColor: Colors.black,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Close',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
@@ -123,12 +124,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
           ),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
+            icon: Icon(Icons.more_vert),
             color: Theme.of(context).colorScheme.surface,
             elevation: 8,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Colors.white12),
+              side: BorderSide(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)),
             ),
             onSelected: (value) {
               if (value == 'Profile') {
@@ -153,7 +154,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 );
               } else if (value == 'Feature Request') {
-                _showFeedbackForm(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FeatureRequestScreen(),
+                  ),
+                );
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -162,26 +168,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.person_outline, color: Theme.of(context).colorScheme.primary),
-                    const SizedBox(width: 12),
-                    const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(width: 12),
+                    Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'Favourites',
                 child: Row(
                   children: [
-                    Icon(Icons.star_border_rounded, color: Colors.white54),
+                    Icon(Icons.star_border_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
                     SizedBox(width: 12),
                     Text('Favourites', style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'Settings',
                 child: Row(
                   children: [
-                    Icon(Icons.settings_outlined, color: Colors.white54),
+                    Icon(Icons.settings_outlined, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
                     SizedBox(width: 12),
                     Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
@@ -200,7 +206,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
         ],
       ),
       body: ListenableBuilder(
@@ -225,7 +231,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildWeeklyProgress(context, weeklyWorkouts, goal, progress),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 Row(
                   children: [
                     Expanded(
@@ -239,7 +245,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Expanded(
                       child: GestureDetector(
                         onTap: () => widget.onNavigate?.call(3),
@@ -253,24 +259,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _buildProgressCard(context),
-                const SizedBox(height: 24),
-                const Text(
+                SizedBox(height: 24),
+                Text(
                   'Recent Activity',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _buildHistorySummary(
                   context,
                   history.isNotEmpty ? history.first : null,
                 ),
-                const SizedBox(height: 24),
-                const Text(
+                SizedBox(height: 24),
+                Text(
                   'Exercise of the Day',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _buildLibraryFeature(context, featuredExercise),
               ],
             ),
@@ -291,7 +297,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -299,11 +305,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Weekly Goal',
-                style: TextStyle(color: Colors.white70, fontSize: 16),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70), fontSize: 16),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -317,7 +323,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   Text(
                     '/$goal Workouts',
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18),
                   ),
                 ],
               ),
@@ -332,13 +338,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 CircularProgressIndicator(
                   value: progress,
                   strokeWidth: 8,
-                  backgroundColor: Colors.white12,
+                  backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 Center(
                   child: Text(
                     '${(progress * 100).toInt()}%',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -373,10 +379,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: color, size: 32),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ],
       ),
@@ -411,8 +417,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 size: 28,
               ),
             ),
-            const SizedBox(width: 16),
-            const Expanded(
+            SizedBox(width: 16),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -421,20 +427,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 4),
                   Text(
                     'Track metrics, photos & advanced 1RM analytics',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70), fontSize: 12),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
-              color: Colors.white54,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
               size: 16,
             ),
           ],
@@ -448,12 +454,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Text(
+        child: Text(
           'No recent activity. Time to hit the gym!',
-          style: TextStyle(color: Colors.white54),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
         ),
       );
     }
@@ -473,7 +479,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -482,18 +488,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Expanded(
             child: Row(
               children: [
-                const CircleAvatar(
-                  backgroundColor: Colors.white12,
+                CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                   child: Icon(Icons.fitness_center, color: Colors.blueAccent),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         session.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -501,8 +507,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       Text(
                         '$timeStr • $mins mins',
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
                           fontSize: 14,
                         ),
                       ),
@@ -512,7 +518,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: Colors.white54),
+          Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
         ],
       ),
     );
@@ -542,8 +548,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 context,
               ).colorScheme.primary.withValues(alpha: 0.3),
             ),
-            gradient: const LinearGradient(
-              colors: [Colors.black87, Colors.transparent],
+            gradient: LinearGradient(
+              colors: [Theme.of(context).colorScheme.surface, Colors.transparent],
               begin: Alignment.bottomLeft,
               end: Alignment.topRight,
             ),
@@ -556,15 +562,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Text(
                 exercise.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               Text(
                 'Target: ${exercise.primaryMuscle}',
-                style: const TextStyle(color: Colors.white70),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70)),
               ),
             ],
           ),
@@ -573,180 +579,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  void _showFeedbackForm(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const FeedbackFormDialog(),
-    );
-  }
-}
-
-class FeedbackFormDialog extends StatefulWidget {
-  const FeedbackFormDialog({super.key});
-
-  @override
-  State<FeedbackFormDialog> createState() => _FeedbackFormDialogState();
-}
-
-class _FeedbackFormDialogState extends State<FeedbackFormDialog> {
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final feedbackController = TextEditingController();
-  bool _isSubmitting = false;
-
-  Future<void> _submit() async {
-    const String scriptUrl =
-        'https://script.google.com/macros/s/AKfycbyvL-sbaLsVB9xYkMrYSbsdmrU88u1eTPqp8D5zEGi0OWV4gmkoR9PCmPSp0MSwuk8HIQ/exec';
-
-    if (nameController.text.isEmpty || feedbackController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill out your name and feedback.'),
-        ),
-      );
-      return;
-    }
-
-    setState(() => _isSubmitting = true);
-
-    try {
-      if (scriptUrl != 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-        await http.post(
-          Uri.parse(scriptUrl),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'name': nameController.text,
-            'email': emailController.text,
-            'feedback': feedbackController.text,
-          }),
-        );
-      } else {
-        await Future.delayed(
-          const Duration(seconds: 1),
-        ); // Simulate network request for testing
-      }
-
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Thank you! Your feedback has been securely submitted.',
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to submit: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      title: const Text(
-        'Feedback & Bug Report',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Help us improve Trainova. Report a bug or share your suggestions below.',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                hintText: 'Name',
-                hintStyle: const TextStyle(color: Colors.white38),
-                filled: true,
-                fillColor: Colors.white12,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-              textCapitalization: TextCapitalization.words,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                hintText: 'Email Address',
-                hintStyle: const TextStyle(color: Colors.white38),
-                filled: true,
-                fillColor: Colors.white12,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: feedbackController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'E.g., I found a bug... / It would be great if...',
-                hintStyle: const TextStyle(color: Colors.white38),
-                filled: true,
-                fillColor: Colors.white12,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => _isSubmitting ? null : Navigator.of(context).pop(),
-          child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
-        ),
-        ElevatedButton(
-          onPressed: _isSubmitting ? null : _submit,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            foregroundColor: Colors.black,
-          ),
-          child: _isSubmitting
-              ? const SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                    strokeWidth: 2,
-                  ),
-                )
-              : const Text(
-                  'Submit',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-        ),
-      ],
-    );
-  }
 }

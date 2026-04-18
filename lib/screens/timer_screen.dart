@@ -87,9 +87,9 @@ class _TimerScreenState extends State<TimerScreen> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.white54, fontSize: 16)),
+                    child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontSize: 16)),
                   ),
-                  const Text('Custom Timer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text('Custom Timer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   TextButton(
                     onPressed: () {
                       if (customDuration.inSeconds > 0) {
@@ -103,9 +103,9 @@ class _TimerScreenState extends State<TimerScreen> {
               ),
               Expanded(
                 child: CupertinoTheme(
-                  data: const CupertinoThemeData(
+                  data: CupertinoThemeData(
                     textTheme: CupertinoTextThemeData(
-                      pickerTextStyle: TextStyle(color: Colors.white, fontSize: 22),
+                      pickerTextStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 22),
                     ),
                   ),
                   child: CupertinoTimerPicker(
@@ -138,14 +138,14 @@ class _TimerScreenState extends State<TimerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rest Timer', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Rest Timer', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Column(
         children: [
-          const SizedBox(height: 40),
+          SizedBox(height: 40),
           Center(
             child: Stack(
               alignment: Alignment.center,
@@ -156,7 +156,7 @@ class _TimerScreenState extends State<TimerScreen> {
                   child: CircularProgressIndicator(
                     value: progress,
                     strokeWidth: 12,
-                    backgroundColor: Colors.white12,
+                    backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                     valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                   ),
                 ),
@@ -165,29 +165,29 @@ class _TimerScreenState extends State<TimerScreen> {
                   children: [
                     Text(
                       _formatTime(_remainingSeconds),
-                      style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, letterSpacing: 2),
+                      style: TextStyle(fontSize: 64, fontWeight: FontWeight.bold, letterSpacing: 2),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       'of ${_formatTime(_durationSeconds)}',
-                      style: const TextStyle(fontSize: 16, color: Colors.white54),
+                      style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 50),
+          SizedBox(height: 50),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildControlButton(
                 icon: Icons.refresh,
                 onPressed: _resetTimer,
-                color: Colors.white54,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
                 backgroundColor: Theme.of(context).colorScheme.surface,
               ),
-              const SizedBox(width: 32),
+              SizedBox(width: 32),
               _buildControlButton(
                 icon: _isRunning ? Icons.pause : Icons.play_arrow,
                 onPressed: _isRunning ? _stopTimer : _startTimer,
@@ -196,28 +196,28 @@ class _TimerScreenState extends State<TimerScreen> {
                 size: 80,
                 iconSize: 40,
               ),
-              const SizedBox(width: 32),
+              SizedBox(width: 32),
               _buildControlButton(
                 icon: Icons.edit,
                 onPressed: _customTimerDialog,
-                color: Colors.white54,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
                 backgroundColor: Theme.of(context).colorScheme.surface,
               ),
             ],
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: 40),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              decoration: const BoxDecoration(
-                color: Colors.black26,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Presets', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
+                  Text('Presets', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 20),
                   Expanded(
                     child: GridView.builder(
                       physics: const BouncingScrollPhysics(),
@@ -240,7 +240,7 @@ class _TimerScreenState extends State<TimerScreen> {
                               color: isSelected ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2) : Theme.of(context).colorScheme.surface,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white12,
+                                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                                 width: isSelected ? 2 : 1,
                               ),
                             ),
@@ -251,7 +251,7 @@ class _TimerScreenState extends State<TimerScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                             ),

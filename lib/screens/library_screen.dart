@@ -19,7 +19,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Exercise Library', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Exercise Library', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -51,7 +51,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white38,
+                          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38),
                           width: 1.5,
                         ),
                       ),
@@ -59,7 +59,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         category,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.black : Colors.white,
+                          color: isSelected ? Colors.black : Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -68,7 +68,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
               },
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           
           // Exercise List
           Expanded(
@@ -101,7 +101,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white12),
+          border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -118,24 +118,24 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   child: Icon(Icons.fitness_center, color: Theme.of(context).colorScheme.primary),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       exercise.name,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       exercise.primaryMuscle,
-                      style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.white54),
+              Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
             ],
           ),
         ),

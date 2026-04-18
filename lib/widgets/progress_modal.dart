@@ -55,24 +55,24 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
       ),
       child: Column(
         children: [
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           // Drag handle
           Container(
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white24,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 16),
-          const Text('Personal Progress', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
+          Text('Personal Progress', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          SizedBox(height: 16),
           TabBar(
             controller: _tabController,
             indicatorColor: primaryColor,
             labelColor: primaryColor,
-            unselectedLabelColor: Colors.white54,
+            unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
             tabs: const [
               Tab(text: 'Metrics'),
               Tab(text: 'Photos'),
@@ -105,8 +105,8 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Log New Entry', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          Text('Log New Entry', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -116,12 +116,12 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                   decoration: InputDecoration(
                     labelText: 'Body Weight (kg)',
                     filled: true,
-                    fillColor: Colors.white12,
+                    fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               Expanded(
                 child: TextField(
                   controller: bfController,
@@ -129,14 +129,14 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                   decoration: InputDecoration(
                     labelText: 'Body Fat (%)',
                     filled: true,
-                    fillColor: Colors.white12,
+                    fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
@@ -159,16 +159,16 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                 setState(() {});
               }
             },
-            child: const Text('SAVE METRICS', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text('SAVE METRICS', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: 32),
-          const Text('Recent Entries', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          SizedBox(height: 32),
+          Text('Recent Entries', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 16),
           ListenableBuilder(
             listenable: WorkoutState.instance,
             builder: (context, _) {
               final logs = WorkoutState.instance.progressLogs;
-              if (logs.isEmpty) return const Center(child: Padding(padding: EdgeInsets.all(16), child: Text('No entries yet.', style: TextStyle(color: Colors.white54))));
+              if (logs.isEmpty) return Center(child: Padding(padding: EdgeInsets.all(16), child: Text('No entries yet.', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)))));
 
               return ListView.builder(
                 shrinkWrap: true,
@@ -179,9 +179,9 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: Icon(Icons.monitor_weight, color: primaryColor),
-                      title: Text('${log.weight} kg', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text('${log.weight} kg', style: TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text('${log.date.day}/${log.date.month}/${log.date.year}'),
-                      trailing: Text('${log.bodyFat}% BF', style: const TextStyle(color: Colors.white54)),
+                      trailing: Text('${log.bodyFat}% BF', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))),
                     );
                   },
                 );
@@ -208,23 +208,23 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => _pickImage(ImageSource.camera),
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text('Camera'),
+                      icon: Icon(Icons.camera_alt),
+                      label: Text('Camera'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
+                        foregroundColor: Theme.of(context).colorScheme.onSurface,
                         side: BorderSide(color: primaryColor.withValues(alpha: 0.5)),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => _pickImage(ImageSource.gallery),
-                      icon: const Icon(Icons.photo_library),
-                      label: const Text('Gallery'),
+                      icon: Icon(Icons.photo_library),
+                      label: Text('Gallery'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
+                        foregroundColor: Theme.of(context).colorScheme.onSurface,
                         side: BorderSide(color: primaryColor.withValues(alpha: 0.5)),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
@@ -232,10 +232,10 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               Expanded(
                 child: logs.isEmpty
-                    ? const Center(child: Text('No photos uploaded yet.', style: TextStyle(color: Colors.white54)))
+                    ? Center(child: Text('No photos uploaded yet.', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))))
                     : GridView.builder(
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -257,7 +257,7 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                                   : Image.file(File(log.photos.first.path), fit: BoxFit.cover),
                                 Container(
                                   alignment: Alignment.bottomCenter,
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [Colors.transparent, Colors.black87],
                                       begin: Alignment.topCenter,
@@ -265,7 +265,7 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
                                     ),
                                   ),
                                   padding: const EdgeInsets.all(8),
-                                  child: Text('${log.date.day}/${log.date.month} - ${log.weight}kg', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                                  child: Text('${log.date.day}/${log.date.month} - ${log.weight}kg', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                 ),
                               ],
                             ),
@@ -344,18 +344,18 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Bench Press 1RM Estimate', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          const Text('Calculated via Brzycki Formula based on tracking history', style: TextStyle(color: Colors.white54, fontSize: 14)),
-          const SizedBox(height: 32),
+          Text('Bench Press 1RM Estimate', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 8),
+          Text('Calculated via Brzycki Formula based on tracking history', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontSize: 14)),
+          SizedBox(height: 32),
           Expanded(
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: true,
-                  getDrawingHorizontalLine: (value) => FlLine(color: Colors.white12, strokeWidth: 1),
-                  getDrawingVerticalLine: (value) => FlLine(color: Colors.white12, strokeWidth: 1),
+                  getDrawingHorizontalLine: (value) => FlLine(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), strokeWidth: 1),
+                  getDrawingVerticalLine: (value) => FlLine(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), strokeWidth: 1),
                 ),
                 titlesData: const FlTitlesData(show: false),
                 borderData: FlBorderData(show: false),
@@ -380,16 +380,16 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           // Additional stats card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Colors.white12, borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(16)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildStatColumn('Current 1RM', '${lineSpots.last.y.toStringAsFixed(1)} kg', primaryColor),
-                Container(height: 40, width: 1, color: Colors.white24),
+                Container(height: 40, width: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24)),
                 _buildStatColumn('Progression', '+${(lineSpots.last.y - lineSpots.first.y).toStringAsFixed(1)} kg', Colors.greenAccent),
               ],
             ),
@@ -402,8 +402,8 @@ class _ProgressModalState extends State<ProgressModal> with SingleTickerProvider
   Widget _buildStatColumn(String label, String value, Color color) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 14)),
-        const SizedBox(height: 4),
+        Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontSize: 14)),
+        SizedBox(height: 4),
         Text(value, style: TextStyle(color: color, fontSize: 24, fontWeight: FontWeight.bold)),
       ],
     );

@@ -61,7 +61,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(20),
@@ -76,38 +76,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
-              const Text(
+              SizedBox(height: 32),
+              Text(
                 'Welcome to Trainova',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 12),
-              const Text(
+              SizedBox(height: 12),
+              Text(
                 'Let\'s personalize your fitness journey. Enter your base metrics below.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white70,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70),
                 ),
               ),
-              const SizedBox(height: 48),
+              SizedBox(height: 48),
 
               // Measurement Toggle
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Imperial', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                  Text('Imperial', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70), fontWeight: FontWeight.bold)),
                   Switch(
                     value: _isMetric,
                     activeThumbColor: Theme.of(context).colorScheme.primary,
-                    inactiveThumbColor: Colors.white54,
-                    inactiveTrackColor: Colors.white12,
+                    inactiveThumbColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
+                    inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                     onChanged: (val) {
                       setState(() {
                         _isMetric = val;
@@ -117,29 +117,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Text('Metric', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               _buildInputField('What should we call you?', _nameController, TextInputType.name, Icons.person_outline),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               
               Row(
                 children: [
                   Expanded(child: _buildInputField('Age', _ageController, TextInputType.number, Icons.cake_outlined)),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Colors.white12,
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: _gender,
                           dropdownColor: const Color(0xFF1E1E1E),
-                          icon: const Icon(Icons.arrow_drop_down, color: Colors.white54),
+                          icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
                           isExpanded: true,
-                          style: const TextStyle(color: Colors.white, fontSize: 16),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16),
                           items: ['Male', 'Female', 'Other'].map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -157,20 +157,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
 
               Row(
                 children: [
                   Expanded(child: _buildInputField(_isMetric ? 'Weight (kg)' : 'Weight (lbs)', _weightController, const TextInputType.numberWithOptions(decimal: true), Icons.scale_outlined)),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(child: _buildInputField(_isMetric ? 'Height (cm)' : 'Height (in)', _heightController, const TextInputType.numberWithOptions(decimal: true), Icons.height)),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               
               _buildInputField('Goal: Days per week to workout?', _goalController, TextInputType.number, Icons.track_changes_outlined),
               
-              const SizedBox(height: 56),
+              SizedBox(height: 56),
               
               ElevatedButton(
                 onPressed: _completeOnboarding,
@@ -184,7 +184,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   elevation: 8,
                   shadowColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                 ),
-                child: const Text(
+                child: Text(
                   'LAUNCH TRAINOVA',
                   style: TextStyle(
                     fontSize: 18,
@@ -193,7 +193,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -205,13 +205,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return TextField(
       controller: controller,
       keyboardType: type,
-      style: const TextStyle(color: Colors.white, fontSize: 16),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white38),
-        prefixIcon: Icon(icon, color: Colors.white54),
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)),
+        prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
         filled: true,
-        fillColor: Colors.white12,
+        fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
         contentPadding: const EdgeInsets.symmetric(vertical: 18),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

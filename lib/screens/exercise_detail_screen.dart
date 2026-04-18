@@ -20,21 +20,21 @@ class ExerciseDetailScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 exercise.name,
-                style: const TextStyle(fontWeight: FontWeight.bold, shadows: [Shadow(color: Colors.black, blurRadius: 10)]),
+                style: TextStyle(fontWeight: FontWeight.bold, shadows: [Shadow(color: Theme.of(context).brightness == Brightness.light ? Colors.transparent : Colors.black, blurRadius: 10)]),
               ),
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
-                    colors: [Theme.of(context).colorScheme.primary.withValues(alpha: 0.6), Colors.black87],
+                    colors: [Theme.of(context).colorScheme.primary.withValues(alpha: 0.6), Theme.of(context).colorScheme.surface],
                   ),
                 ),
                 child: Center(
                   child: Icon(
                     Icons.fitness_center,
                     size: 100,
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                 ),
               ),
@@ -53,27 +53,27 @@ class ExerciseDetailScreen extends StatelessWidget {
                       _buildChip(context, Icons.accessibility_new, exercise.primaryMuscle, Theme.of(context).colorScheme.primary),
                     ],
                   ),
-                  const SizedBox(height: 32),
-                  const Text('Benefits', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 32),
+                  Text('Benefits', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+                  SizedBox(height: 8),
                   Text(
                     exercise.benefits,
-                    style: const TextStyle(fontSize: 16, color: Colors.white70, height: 1.5),
+                    style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70), height: 1.5),
                   ),
-                  const SizedBox(height: 32),
-                  const Text('Instructions', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 32),
+                  Text('Instructions', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+                  SizedBox(height: 8),
                   Text(
                     exercise.instructions,
-                    style: const TextStyle(fontSize: 16, color: Colors.white70, height: 1.5),
+                    style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70), height: 1.5),
                   ),
-                  const SizedBox(height: 32),
-                  const Text('Details', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                  const SizedBox(height: 16),
-                  _buildDetailRow(Icons.build, 'Required Equipment', exercise.equipment),
-                  const SizedBox(height: 16),
-                  _buildDetailRow(Icons.group_work, 'Secondary Muscles', exercise.secondaryMuscles.isEmpty ? 'None' : exercise.secondaryMuscles.join(', ')),
-                  const SizedBox(height: 48),
+                  SizedBox(height: 32),
+                  Text('Details', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+                  SizedBox(height: 16),
+                  _buildDetailRow(context, Icons.build, 'Required Equipment', exercise.equipment),
+                  SizedBox(height: 16),
+                  _buildDetailRow(context, Icons.group_work, 'Secondary Muscles', exercise.secondaryMuscles.isEmpty ? 'None' : exercise.secondaryMuscles.join(', ')),
+                  SizedBox(height: 48),
                   ElevatedButton(
                     onPressed: () {
                       if (WorkoutState.instance.isWorkoutActive) {
@@ -87,12 +87,12 @@ class ExerciseDetailScreen extends StatelessWidget {
                           context: context,
                           builder: (context) => AlertDialog(
                             backgroundColor: Theme.of(context).colorScheme.surface,
-                            title: const Text('No Active Workout'),
-                            content: const Text('You don\'t have a workout currently running. Start a Freestyle Workout with this exercise?'),
+                            title: Text('No Active Workout'),
+                            content: Text('You don\'t have a workout currently running. Start a Freestyle Workout with this exercise?'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+                                child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))),
                               ),
                               ElevatedButton(
                                 onPressed: () {
@@ -104,7 +104,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
-                                child: const Text('Start', style: TextStyle(color: Colors.black)),
+                                child: Text('Start', style: TextStyle(color: Colors.black)),
                               ),
                             ],
                           ),
@@ -117,7 +117,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                       minimumSize: const Size.fromHeight(60),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
-                    child: const Text('ADD TO WORKOUT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    child: Text('ADD TO WORKOUT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ],
               ),
@@ -140,26 +140,26 @@ class ExerciseDetailScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16, color: color),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String title, String value) {
+  Widget _buildDetailRow(BuildContext context, IconData icon, String title, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: Colors.white54, size: 24),
-        const SizedBox(width: 16),
+        Icon(icon, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), size: 24),
+        SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Text(value, style: const TextStyle(color: Colors.white, fontSize: 16)),
+              Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontWeight: FontWeight.bold)),
+              SizedBox(height: 4),
+              Text(value, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16)),
             ],
           ),
         ),

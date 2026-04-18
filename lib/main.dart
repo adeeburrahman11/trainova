@@ -21,35 +21,95 @@ class TrainovaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Trainova',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF121212),
-        primaryColor: const Color(0xFF39FF14), // Neon Green
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF39FF14),
-          secondary: Color(0xFF00E5FF), // Electric Blue
-          surface: Color(0xFF1E1E1E),
-        ),
-        textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Color(0xFF1E1E1E),
-          selectedItemColor: Color(0xFF39FF14),
-          unselectedItemColor: Colors.white54,
-          type: BottomNavigationBarType.fixed,
-          elevation: 8,
-        ),
-      ),
-      home: ListenableBuilder(
-        listenable: WorkoutState.instance,
-        builder: (context, _) {
-          return WorkoutState.instance.isFirstLaunch
+    return ListenableBuilder(
+      listenable: WorkoutState.instance,
+      builder: (context, _) {
+        final variant = WorkoutState.instance.themeVariant;
+
+        // Base Dark Theme
+        final darkThemeData = ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: const Color(0xFF121212),
+          primaryColor: const Color(0xFF39FF14),
+          colorScheme: const ColorScheme.dark(
+            primary: Color(0xFF39FF14),
+            secondary: Color(0xFF00E5FF),
+            surface: Color(0xFF1E1E1E),
+          ),
+          textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Color(0xFF1E1E1E),
+            selectedItemColor: Color(0xFF39FF14),
+            unselectedItemColor: Colors.white54,
+            type: BottomNavigationBarType.fixed,
+            elevation: 8,
+          ),
+        );
+
+        // AMOLED Black Theme
+        final amoledThemeData = ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: const Color(0xFF000000), // Pure Black Main Scaffold
+          primaryColor: const Color(0xFF39FF14),
+          colorScheme: const ColorScheme.dark(
+            primary: Color(0xFF39FF14),
+            secondary: Color(0xFF00E5FF),
+            surface: Color(0xFF0A0A0A), // Deepest Gray Surface
+          ),
+          textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Color(0xFF0A0A0A),
+            selectedItemColor: Color(0xFF39FF14),
+            unselectedItemColor: Colors.white54,
+            type: BottomNavigationBarType.fixed,
+            elevation: 8,
+          ),
+        );
+
+        // Light Theme
+        final lightThemeData = ThemeData(
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: const Color(0xFFF0F0F0), // Clean light grey
+          primaryColor: const Color(0xFF228B22), // Forest Green for readability on light
+          colorScheme: const ColorScheme.light(
+            primary: Color(0xFF228B22),
+            secondary: Color(0xFF008B8B),
+            surface: Color(0xFFFFFFFF), // Pure white surfaces
+          ),
+          textTheme: GoogleFonts.outfitTextTheme(ThemeData.light().textTheme),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Color(0xFFFFFFFF),
+            selectedItemColor: Color(0xFF228B22),
+            unselectedItemColor: Colors.black54,
+            type: BottomNavigationBarType.fixed,
+            elevation: 8,
+          ),
+        );
+
+        ThemeMode mode = ThemeMode.system;
+        ThemeData selectedDarkTheme = darkThemeData;
+
+        if (variant == 'Light') {
+          mode = ThemeMode.light;
+        } else if (variant == 'Dark') {
+          mode = ThemeMode.dark;
+          selectedDarkTheme = darkThemeData;
+        } else if (variant == 'AMOLED Black') {
+          mode = ThemeMode.dark;
+          selectedDarkTheme = amoledThemeData;
+        }
+
+        return MaterialApp(
+          title: 'Trainova',
+          debugShowCheckedModeBanner: false,
+          themeMode: mode,
+          theme: lightThemeData,
+          darkTheme: selectedDarkTheme,
+          home: WorkoutState.instance.isFirstLaunch
               ? const OnboardingScreen()
-              : const MainNavigation();
-        },
-      ),
+              : const MainNavigation(),
+        );
+      },
     );
   }
 }

@@ -82,12 +82,12 @@ class _TrackScreenState extends State<TrackScreen> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          title: const Text('Workout Name'),
+          title: Text('Workout Name'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'e.g. Freestyle Workout',
-              hintStyle: TextStyle(color: Colors.white38),
+              hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)),
             ),
             autofocus: true,
             textCapitalization: TextCapitalization.words,
@@ -95,7 +95,7 @@ class _TrackScreenState extends State<TrackScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+              child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))),
             ),
             ElevatedButton(
               onPressed: () {
@@ -107,7 +107,7 @@ class _TrackScreenState extends State<TrackScreen> {
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
-              child: const Text('Start', style: TextStyle(color: Colors.black)),
+              child: Text('Start', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -122,12 +122,12 @@ class _TrackScreenState extends State<TrackScreen> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          title: const Text('Add Exercise'),
+          title: Text('Add Exercise'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'e.g. Lunges',
-              hintStyle: TextStyle(color: Colors.white38),
+              hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)),
             ),
             autofocus: true,
             textCapitalization: TextCapitalization.words,
@@ -135,7 +135,7 @@ class _TrackScreenState extends State<TrackScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+              child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))),
             ),
             ElevatedButton(
               onPressed: () {
@@ -148,7 +148,7 @@ class _TrackScreenState extends State<TrackScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
-              child: const Text('Add', style: TextStyle(color: Colors.black)),
+              child: Text('Add', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -161,12 +161,12 @@ class _TrackScreenState extends State<TrackScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: const Text('Finish Workout?'),
-        content: const Text('Are you sure you want to finish this workout?'),
+        title: Text('Finish Workout?'),
+        content: Text('Are you sure you want to finish this workout?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Keep Training', style: TextStyle(color: Colors.white54)),
+            child: Text('Keep Training', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))),
           ),
           ElevatedButton(
             onPressed: () {
@@ -179,7 +179,7 @@ class _TrackScreenState extends State<TrackScreen> {
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
-            child: const Text('Finish', style: TextStyle(color: Colors.black)),
+            child: Text('Finish', style: TextStyle(color: Colors.black)),
           ),
         ],
       ),
@@ -191,12 +191,12 @@ class _TrackScreenState extends State<TrackScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: const Text('Cancel Workout?'),
-        content: const Text('Are you sure you want to leave without saving? All progress will be lost.'),
+        title: Text('Cancel Workout?'),
+        content: Text('Are you sure you want to leave without saving? All progress will be lost.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Keep Training', style: TextStyle(color: Colors.white54)),
+            child: Text('Keep Training', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))),
           ),
           ElevatedButton(
             onPressed: () {
@@ -206,7 +206,7 @@ class _TrackScreenState extends State<TrackScreen> {
               _timer = null;
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            child: const Text('Leave', style: TextStyle(color: Colors.white)),
+            child: Text('Leave', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           ),
         ],
       ),
@@ -236,7 +236,7 @@ class _TrackScreenState extends State<TrackScreen> {
   Widget _buildPresetSelectionMode(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Start Workout', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Start Workout', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -254,11 +254,11 @@ class _TrackScreenState extends State<TrackScreen> {
                 minimumSize: const Size.fromHeight(60),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: const Text('START EMPTY WORKOUT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text('START EMPTY WORKOUT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
-            const SizedBox(height: 32),
-            const Text('Routines', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
+            SizedBox(height: 32),
+            Text('Routines', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: _presets.length,
@@ -272,7 +272,7 @@ class _TrackScreenState extends State<TrackScreen> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white12),
+                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -280,9 +280,9 @@ class _TrackScreenState extends State<TrackScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(preset['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)),
-                              const SizedBox(height: 4),
-                              Text(preset['subtitle'], style: const TextStyle(color: Colors.white54, fontSize: 14)),
+                              Text(preset['title'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Theme.of(context).colorScheme.onSurface)),
+                              SizedBox(height: 4),
+                              Text(preset['subtitle'], style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontSize: 14)),
                             ],
                           ),
                           Icon(Icons.play_circle_fill, color: Theme.of(context).colorScheme.primary, size: 36),
@@ -311,7 +311,7 @@ class _TrackScreenState extends State<TrackScreen> {
       appBar: AppBar(
         title: Column(
           children: [
-            Text(WorkoutState.instance.activeWorkoutTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+            Text(WorkoutState.instance.activeWorkoutTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
             Text(
               '${_elapsed.inMinutes.toString().padLeft(2, '0')}:${(_elapsed.inSeconds % 60).toString().padLeft(2, '0')}', 
               style: TextStyle(
@@ -327,7 +327,7 @@ class _TrackScreenState extends State<TrackScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back),
           onPressed: _cancelWorkout,
         ),
         actions: [
@@ -342,14 +342,14 @@ class _TrackScreenState extends State<TrackScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Expanded(
               child: activeExercises.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         "No exercises added yet.\nLet's get training!",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white54, fontSize: 18),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontSize: 18),
                       ),
                     )
                   : ListView.builder(
@@ -359,7 +359,7 @@ class _TrackScreenState extends State<TrackScreen> {
                       },
                     ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: _addExercise,
               style: ElevatedButton.styleFrom(
@@ -368,7 +368,7 @@ class _TrackScreenState extends State<TrackScreen> {
                 minimumSize: const Size.fromHeight(60),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: const Text('+ ADD EXERCISE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text('+ ADD EXERCISE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
           ],
         ),
@@ -378,7 +378,7 @@ class _TrackScreenState extends State<TrackScreen> {
   }
 
   Widget _buildExerciseCard(BuildContext context, int exerciseIndex) {
-    if (exerciseIndex >= WorkoutState.instance.activeExercises.length) return const SizedBox();
+    if (exerciseIndex >= WorkoutState.instance.activeExercises.length) return SizedBox();
     final exercise = WorkoutState.instance.activeExercises[exerciseIndex];
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -395,10 +395,10 @@ class _TrackScreenState extends State<TrackScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text('${exerciseIndex + 1}. ${exercise.name}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                child: Text('${exerciseIndex + 1}. ${exercise.name}', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               ),
               IconButton(
-                icon: const Icon(Icons.close, color: Colors.redAccent),
+                icon: Icon(Icons.close, color: Colors.redAccent),
                 onPressed: () {
                   setState(() {
                     WorkoutState.instance.activeExercises.removeAt(exerciseIndex);
@@ -407,28 +407,28 @@ class _TrackScreenState extends State<TrackScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           // Set headers
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(width: 30, child: Text('Set', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white54))),
-              SizedBox(width: 70, child: Text('kg', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white54))),
-              SizedBox(width: 70, child: Text('Reps', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white54))),
-              SizedBox(width: 40, child: Icon(Icons.check, color: Colors.white54)),
+              SizedBox(width: 30, child: Text('Set', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)))),
+              SizedBox(width: 70, child: Text('kg', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)))),
+              SizedBox(width: 70, child: Text('Reps', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)))),
+              SizedBox(width: 40, child: Icon(Icons.check, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54))),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           ...List.generate(exercise.sets.length, (setIndex) {
             return _buildSetRow(context, exerciseIndex, setIndex);
           }),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () => WorkoutState.instance.addSetToActiveExercise(exerciseIndex),
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text('Add Set', style: TextStyle(color: Colors.white)),
+            icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
+            label: Text('Add Set', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white12,
+              backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
               minimumSize: const Size.fromHeight(50),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -439,13 +439,13 @@ class _TrackScreenState extends State<TrackScreen> {
   }
 
   Widget _buildSetRow(BuildContext context, int exerciseIndex, int setIndex) {
-    if (exerciseIndex >= WorkoutState.instance.activeExercises.length) return const SizedBox();
-    if (setIndex >= WorkoutState.instance.activeExercises[exerciseIndex].sets.length) return const SizedBox();
+    if (exerciseIndex >= WorkoutState.instance.activeExercises.length) return SizedBox();
+    if (setIndex >= WorkoutState.instance.activeExercises[exerciseIndex].sets.length) return SizedBox();
     
     final set = WorkoutState.instance.activeExercises[exerciseIndex].sets[setIndex];
     final isCompleted = set.isCompleted;
 
-    Color checkColor = isCompleted ? Theme.of(context).colorScheme.primary : Colors.white24;
+    Color checkColor = isCompleted ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.24);
     Color rowBg = isCompleted ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1) : Colors.transparent;
 
     return Dismissible(
@@ -456,7 +456,7 @@ class _TrackScreenState extends State<TrackScreen> {
         padding: const EdgeInsets.only(right: 20),
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(color: Colors.redAccent, borderRadius: BorderRadius.circular(12)),
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onSurface),
       ),
       onDismissed: (_) {
          WorkoutState.instance.removeSetFromActiveExercise(exerciseIndex, setIndex);
@@ -475,7 +475,7 @@ class _TrackScreenState extends State<TrackScreen> {
               width: 30,
               child: Text(
                 '${setIndex + 1}',
-                style: TextStyle(fontWeight: FontWeight.bold, color: isCompleted ? Colors.white70 : Colors.white54),
+                style: TextStyle(fontWeight: FontWeight.bold, color: isCompleted ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70) : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
               ),
             ),
             SizedBox(
@@ -484,7 +484,7 @@ class _TrackScreenState extends State<TrackScreen> {
                 initialValue: set.weight?.toString(),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.black26,
@@ -500,7 +500,7 @@ class _TrackScreenState extends State<TrackScreen> {
                 initialValue: set.reps?.toString(),
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.black26,

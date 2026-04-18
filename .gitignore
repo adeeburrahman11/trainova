@@ -49,6 +49,8 @@ app.*.map.json
 .env*
 android/key.properties
 key.properties
+*.jks
+*.keystore
 
 # iOS Build outputs & CocoaPods
 /ios/Pods/

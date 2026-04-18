@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text('Edit Profile'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -72,25 +72,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: _saveProfile,
             child: Text('Save', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 16)),
           ),
-          const SizedBox(width: 8)
+          SizedBox(width: 8)
         ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             _buildTextField('Name', _nameController, TextInputType.name),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Row(
               children: [
                 Expanded(child: _buildTextField('Age (yrs)', _ageController, TextInputType.number)),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white12,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: DropdownButtonHideUnderline(
@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         value: _gender,
                         dropdownColor: const Color(0xFF1E1E1E),
                         isExpanded: true,
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16),
                         items: ['Male', 'Female', 'Other'].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -116,15 +116,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Row(
               children: [
                 Expanded(child: _buildTextField(_isMetric ? 'Weight (kg)' : 'Weight (lbs)', _weightController, const TextInputType.numberWithOptions(decimal: true))),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Expanded(child: _buildTextField(_isMetric ? 'Height (cm)' : 'Height (in)', _heightController, const TextInputType.numberWithOptions(decimal: true))),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             _buildTextField('Goal (days/wk)', _goalController, TextInputType.number),
           ],
         ),
@@ -138,9 +138,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       keyboardType: type,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white54),
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
         filled: true,
-        fillColor: Colors.white12,
+        fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
       ),
     );

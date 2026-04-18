@@ -20,12 +20,14 @@ class WorkoutState extends ChangeNotifier {
     height: 175.0,
     weeklyGoalDays: 5,
   );
+  String _themeVariant = 'System Default';
 
   List<WorkoutSession> get history => List.unmodifiable(_history.reversed);
   List<WorkoutSession> get favoriteWorkouts => List.unmodifiable(_history.reversed.where((s) => s.isFavorite));
   List<ProgressLog> get progressLogs => List.unmodifiable(_progressLogs.reversed);
   UserProfile get profile => _profile;
   bool get isFirstLaunch => _isFirstLaunch;
+  String get themeVariant => _themeVariant;
 
   Future<void> loadState() async {
     final prefs = await SharedPreferences.getInstance();
@@ -46,6 +48,8 @@ class WorkoutState extends ChangeNotifier {
       _progressLogs = logsList.map((s) => ProgressLog.fromJson(jsonDecode(s))).toList();
     }
     
+    _themeVariant = prefs.getString('themeVariant') ?? 'System Default';
+
     notifyListeners();
   }
 
@@ -81,6 +85,14 @@ class WorkoutState extends ChangeNotifier {
     _profile = newProfile;
     _isFirstLaunch = false;
     _saveState();
+    notifyListeners();
+  }
+
+  void setThemeVariant(String newTheme) async {
+    if (_themeVariant == newTheme) return;
+    _themeVariant = newTheme;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('themeVariant', _themeVariant);
     notifyListeners();
   }
 

@@ -10,7 +10,7 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Workout History', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Workout History', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -20,11 +20,11 @@ class HistoryScreen extends StatelessWidget {
           final history = WorkoutState.instance.history;
 
           if (history.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 'No workout history yet.\nStart logging in the Track tab!',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white54, fontSize: 18),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontSize: 18),
               ),
             );
           }
@@ -60,7 +60,7 @@ class HistoryScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,11 +68,11 @@ class HistoryScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(formattedDate, style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold)),
+              Text(formattedDate, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54), fontWeight: FontWeight.bold)),
               IconButton(
                 icon: Icon(
                   session.isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-                  color: session.isFavorite ? Colors.amber : Colors.white54,
+                  color: session.isFavorite ? Colors.amber : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
                 ),
                 onPressed: () {
                   WorkoutState.instance.toggleFavorite(session.id);
@@ -80,22 +80,22 @@ class HistoryScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(session.title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          SizedBox(height: 8),
+          Text(session.title, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          SizedBox(height: 16),
           Row(
             children: [
               _buildStatDetail(Icons.schedule, timeStr),
-              const SizedBox(width: 24),
+              SizedBox(width: 24),
               _buildStatDetail(Icons.fitness_center, volumeStr),
             ],
           ),
-          const SizedBox(height: 16),
-          const Divider(color: Colors.white12),
-          const SizedBox(height: 8),
+          SizedBox(height: 16),
+          Divider(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)),
+          SizedBox(height: 8),
           Text(
             session.summaryText,
-            style: const TextStyle(color: Colors.white70),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70)),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -108,8 +108,8 @@ class HistoryScreen extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 18, color: Colors.blueAccent),
-        const SizedBox(width: 8),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
+        SizedBox(width: 8),
+        Text(value, style: TextStyle(fontWeight: FontWeight.w600)),
       ],
     );
   }
