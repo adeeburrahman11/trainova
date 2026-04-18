@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../models/user_profile.dart';
 import '../state/workout_state.dart';
 
@@ -17,7 +15,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _weightController;
   late TextEditingController _heightController;
   late TextEditingController _goalController;
-  String? _photoPath;
+  bool _isMetric = true;
+  String _gender = 'Other';
 
   @override
   void initState() {
@@ -28,7 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _weightController = TextEditingController(text: profile.weight.toString());
     _heightController = TextEditingController(text: profile.height.toString());
     _goalController = TextEditingController(text: profile.weeklyGoalDays.toString());
-    _photoPath = profile.profilePhotoPath;
+    _isMetric = profile.isMetric;
+    _gender = profile.gender;
   }
 
   @override
@@ -41,17 +41,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    
-    if (pickedFile != null) {
-      setState(() {
-        _photoPath = pickedFile.path;
-      });
-    }
-  }
-
   void _saveProfile() {
     final profile = UserProfile(
       name: _nameController.text.trim(),
@@ -59,7 +48,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       weight: double.tryParse(_weightController.text) ?? 75.0,
       height: double.tryParse(_heightController.text) ?? 175.0,
       weeklyGoalDays: int.tryParse(_goalController.text) ?? 5,
-      profilePhotoPath: _photoPath,
+      isMetric: _isMetric,
+      gender: _gender,
     );
 
     WorkoutState.instance.updateProfile(profile);
@@ -89,45 +79,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.white12,
-                    backgroundImage: _photoPath != null ? FileImage(File(_photoPath!)) as ImageProvider : const NetworkImage('https://i.pravatar.cc/150?img=11'),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.camera_alt, color: Colors.black, size: 20),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
             _buildTextField('Name', _nameController, TextInputType.name),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(child: _buildTextField('Age (yrs)', _ageController, TextInputType.number)),
                 const SizedBox(width: 16),
-                Expanded(child: _buildTextField('Weight (kg)', _weightController, const TextInputType.numberWithOptions(decimal: true))),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white12,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _gender,
+                        dropdownColor: const Color(0xFF1E1E1E),
+                        isExpanded: true,
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                        items: ['Male', 'Female', 'Other'].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            if (val != null) _gender = val;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: _buildTextField('Height (cm)', _heightController, const TextInputType.numberWithOptions(decimal: true))),
+                Expanded(child: _buildTextField(_isMetric ? 'Weight (kg)' : 'Weight (lbs)', _weightController, const TextInputType.numberWithOptions(decimal: true))),
                 const SizedBox(width: 16),
-                Expanded(child: _buildTextField('Goal (days/wk)', _goalController, TextInputType.number)),
+                Expanded(child: _buildTextField(_isMetric ? 'Height (cm)' : 'Height (in)', _heightController, const TextInputType.numberWithOptions(decimal: true))),
               ],
             ),
+            const SizedBox(height: 16),
+            _buildTextField('Goal (days/wk)', _goalController, TextInputType.number),
           ],
         ),
       ),

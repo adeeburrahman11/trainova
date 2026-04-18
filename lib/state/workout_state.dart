@@ -12,8 +12,9 @@ class WorkoutState extends ChangeNotifier {
 
   List<WorkoutSession> _history = [];
   List<ProgressLog> _progressLogs = [];
+  bool _isFirstLaunch = true;
   UserProfile _profile = UserProfile(
-    name: 'Athlete',
+    name: '',
     age: 25,
     weight: 75.0,
     height: 175.0,
@@ -21,8 +22,10 @@ class WorkoutState extends ChangeNotifier {
   );
 
   List<WorkoutSession> get history => List.unmodifiable(_history.reversed);
+  List<WorkoutSession> get favoriteWorkouts => List.unmodifiable(_history.reversed.where((s) => s.isFavorite));
   List<ProgressLog> get progressLogs => List.unmodifiable(_progressLogs.reversed);
   UserProfile get profile => _profile;
+  bool get isFirstLaunch => _isFirstLaunch;
 
   Future<void> loadState() async {
     final prefs = await SharedPreferences.getInstance();
@@ -30,6 +33,7 @@ class WorkoutState extends ChangeNotifier {
     final profileStr = prefs.getString('profile');
     if (profileStr != null) {
       _profile = UserProfile.fromJson(jsonDecode(profileStr));
+      _isFirstLaunch = false;
     }
 
     final historyList = prefs.getStringList('history');
@@ -64,8 +68,18 @@ class WorkoutState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleFavorite(String sessionId) {
+    final index = _history.indexWhere((s) => s.id == sessionId);
+    if (index != -1) {
+      _history[index].isFavorite = !_history[index].isFavorite;
+      _saveState();
+      notifyListeners();
+    }
+  }
+
   void updateProfile(UserProfile newProfile) {
     _profile = newProfile;
+    _isFirstLaunch = false;
     _saveState();
     notifyListeners();
   }

@@ -59,6 +59,7 @@ class WorkoutSession {
   final DateTime date;
   final int durationSeconds;
   final List<TrackedExercise> exercises;
+  bool isFavorite;
 
   WorkoutSession({
     required this.id,
@@ -66,6 +67,7 @@ class WorkoutSession {
     required this.date,
     required this.durationSeconds,
     required this.exercises,
+    this.isFavorite = false,
   });
 
   double get totalVolume {
@@ -84,6 +86,7 @@ class WorkoutSession {
       'date': date.toIso8601String(),
       'durationSeconds': durationSeconds,
       'exercises': exercises.map((e) => e.toJson()).toList(),
+      'isFavorite': isFavorite,
     };
   }
 
@@ -94,6 +97,7 @@ class WorkoutSession {
       date: DateTime.parse(json['date'] as String),
       durationSeconds: json['durationSeconds'] as int,
       exercises: (json['exercises'] as List).map((e) => TrackedExercise.fromJson(e as Map<String, dynamic>)).toList(),
+      isFavorite: json['isFavorite'] as bool? ?? false,
     );
   }
 }

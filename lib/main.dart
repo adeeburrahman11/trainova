@@ -6,6 +6,7 @@ import 'screens/track_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/timer_screen.dart';
 import 'screens/library_screen.dart';
+import 'screens/onboarding_screen.dart';
 
 import 'state/workout_state.dart';
 
@@ -41,7 +42,14 @@ class TrainovaApp extends StatelessWidget {
           elevation: 8,
         ),
       ),
-      home: const MainNavigation(),
+      home: ListenableBuilder(
+        listenable: WorkoutState.instance,
+        builder: (context, _) {
+          return WorkoutState.instance.isFirstLaunch
+              ? const OnboardingScreen()
+              : const MainNavigation();
+        },
+      ),
     );
   }
 }

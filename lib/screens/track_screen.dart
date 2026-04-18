@@ -76,7 +76,7 @@ class _TrackScreenState extends State<TrackScreen> {
   }
 
   void _startEmptyWorkout() {
-    TextEditingController controller = TextEditingController(text: 'Freestyle Workout');
+    TextEditingController controller = TextEditingController();
     showDialog(
       context: context,
       builder: (context) {
@@ -85,7 +85,10 @@ class _TrackScreenState extends State<TrackScreen> {
           title: const Text('Workout Name'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(hintText: 'e.g. Back & Biceps'),
+            decoration: const InputDecoration(
+              hintText: 'e.g. Freestyle Workout',
+              hintStyle: TextStyle(color: Colors.white38),
+            ),
             autofocus: true,
             textCapitalization: TextCapitalization.words,
           ),
@@ -96,11 +99,12 @@ class _TrackScreenState extends State<TrackScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
-                  WorkoutState.instance.startActiveWorkout(controller.text.trim());
-                  _startTimer();
-                  Navigator.pop(context);
-                }
+                final name = controller.text.trim().isNotEmpty 
+                    ? controller.text.trim() 
+                    : 'Freestyle Workout';
+                WorkoutState.instance.startActiveWorkout(name);
+                _startTimer();
+                Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
               child: const Text('Start', style: TextStyle(color: Colors.black)),
@@ -121,7 +125,10 @@ class _TrackScreenState extends State<TrackScreen> {
           title: const Text('Add Exercise'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(hintText: 'e.g. Lunges'),
+            decoration: const InputDecoration(
+              hintText: 'e.g. Lunges',
+              hintStyle: TextStyle(color: Colors.white38),
+            ),
             autofocus: true,
             textCapitalization: TextCapitalization.words,
           ),
@@ -173,6 +180,33 @@ class _TrackScreenState extends State<TrackScreen> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
             child: const Text('Finish', style: TextStyle(color: Colors.black)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _cancelWorkout() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: const Text('Cancel Workout?'),
+        content: const Text('Are you sure you want to leave without saving? All progress will be lost.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Keep Training', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              WorkoutState.instance.cancelActiveWorkout();
+              _timer?.cancel();
+              _timer = null;
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            child: const Text('Leave', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -267,7 +301,13 @@ class _TrackScreenState extends State<TrackScreen> {
 
   Widget _buildActiveWorkoutMode(BuildContext context) {
     final activeExercises = WorkoutState.instance.activeExercises;
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _cancelWorkout();
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: Column(
           children: [
@@ -288,11 +328,7 @@ class _TrackScreenState extends State<TrackScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            WorkoutState.instance.cancelActiveWorkout();
-            _timer?.cancel();
-            _timer = null;
-          },
+          onPressed: _cancelWorkout,
         ),
         actions: [
           TextButton(
@@ -337,6 +373,7 @@ class _TrackScreenState extends State<TrackScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 

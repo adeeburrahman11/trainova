@@ -4,7 +4,8 @@ class UserProfile {
   final double weight;
   final double height;
   final int weeklyGoalDays;
-  final String? profilePhotoPath;
+  final bool isMetric;
+  final String gender;
 
   UserProfile({
     required this.name,
@@ -12,7 +13,8 @@ class UserProfile {
     required this.weight,
     required this.height,
     required this.weeklyGoalDays,
-    this.profilePhotoPath,
+    this.isMetric = true,
+    this.gender = 'Other',
   });
 
   UserProfile copyWith({
@@ -21,7 +23,8 @@ class UserProfile {
     double? weight,
     double? height,
     int? weeklyGoalDays,
-    String? profilePhotoPath,
+    bool? isMetric,
+    String? gender,
   }) {
     return UserProfile(
       name: name ?? this.name,
@@ -29,7 +32,8 @@ class UserProfile {
       weight: weight ?? this.weight,
       height: height ?? this.height,
       weeklyGoalDays: weeklyGoalDays ?? this.weeklyGoalDays,
-      profilePhotoPath: profilePhotoPath ?? this.profilePhotoPath,
+      isMetric: isMetric ?? this.isMetric,
+      gender: gender ?? this.gender,
     );
   }
 
@@ -40,7 +44,8 @@ class UserProfile {
       'weight': weight,
       'height': height,
       'weeklyGoalDays': weeklyGoalDays,
-      'profilePhotoPath': profilePhotoPath,
+      'isMetric': isMetric,
+      'gender': gender,
     };
   }
 
@@ -51,7 +56,8 @@ class UserProfile {
       weight: (json['weight'] as num).toDouble(),
       height: (json['height'] as num).toDouble(),
       weeklyGoalDays: json['weeklyGoalDays'] as int,
-      profilePhotoPath: json['profilePhotoPath'] as String?,
+      isMetric: json['isMetric'] as bool? ?? true,
+      gender: json['gender'] as String? ?? 'Other',
     );
   }
 }

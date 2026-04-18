@@ -38,24 +38,31 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 final isSelected = category == _selectedCategory;
                 return Padding(
                   padding: const EdgeInsets.only(right: 12),
-                  child: FilterChip(
-                    label: Text(
-                      category,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.black : Colors.white,
-                      ),
-                    ),
-                    selected: isSelected,
-                    onSelected: (bool selected) {
+                  child: GestureDetector(
+                    onTap: () {
                       setState(() {
                         _selectedCategory = category;
                       });
                     },
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    selectedColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    showCheckmark: false,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white38,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Text(
+                        category,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? Colors.black : Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 );
               },

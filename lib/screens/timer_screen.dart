@@ -220,12 +220,13 @@ class _TimerScreenState extends State<TimerScreen> {
                   const SizedBox(height: 20),
                   Expanded(
                     child: GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
+                      clipBehavior: Clip.antiAlias,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         mainAxisSpacing: 16,
                         crossAxisSpacing: 16,
-                        childAspectRatio: 1.2,
+                        childAspectRatio: 1.3,
                       ),
                       itemCount: _presets.length,
                       itemBuilder: (context, index) {

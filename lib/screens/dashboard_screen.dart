@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/gestures.dart';
@@ -10,6 +9,8 @@ import '../models/workout.dart';
 import '../widgets/progress_modal.dart';
 import 'exercise_detail_screen.dart';
 import 'profile_screen.dart';
+import 'settings_screen.dart';
+import 'favourites_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Function(int)? onNavigate;
@@ -121,29 +122,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
               );
             },
           ),
-          ListenableBuilder(
-            listenable: WorkoutState.instance,
-            builder: (context, _) {
-              final photoPath = WorkoutState.instance.profile.profilePhotoPath;
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileScreen(),
-                    ),
-                  );
-                },
-                child: CircleAvatar(
-                  backgroundImage: photoPath != null
-                      ? FileImage(File(photoPath)) as ImageProvider
-                      : const NetworkImage('https://i.pravatar.cc/150?img=11'),
-                  radius: 18,
-                ),
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            color: Theme.of(context).colorScheme.surface,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Colors.white12),
+            ),
+            onSelected: (value) {
+              if (value == 'Profile') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileScreen(),
+                  ),
+                );
+              } else if (value == 'Settings') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              } else if (value == 'Favourites') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FavouritesScreen(),
+                  ),
+                );
+              } else if (value == 'Feature Request') {
+                _showFeedbackForm(context);
+              }
             },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'Profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person_outline, color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 12),
+                    const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Favourites',
+                child: Row(
+                  children: [
+                    Icon(Icons.star_border_rounded, color: Colors.white54),
+                    SizedBox(width: 12),
+                    Text('Favourites', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings_outlined, color: Colors.white54),
+                    SizedBox(width: 12),
+                    Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(height: 1),
+              const PopupMenuItem<String>(
+                value: 'Feature Request',
+                child: Row(
+                  children: [
+                    Icon(Icons.lightbulb_outline, color: Colors.amber),
+                    SizedBox(width: 12),
+                    Text('Feature Request', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 8),
         ],
       ),
       body: ListenableBuilder(
@@ -188,7 +245,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         onTap: () => widget.onNavigate?.call(3),
                         child: _buildActionCard(
                           context,
-                          'Quick Timer',
+                          'Rest Timer',
                           Icons.timer_rounded,
                           Colors.orangeAccent,
                         ),
@@ -613,6 +670,7 @@ class _FeedbackFormDialogState extends State<FeedbackFormDialog> {
               controller: nameController,
               decoration: InputDecoration(
                 hintText: 'Name',
+                hintStyle: const TextStyle(color: Colors.white38),
                 filled: true,
                 fillColor: Colors.white12,
                 contentPadding: const EdgeInsets.symmetric(
@@ -631,6 +689,7 @@ class _FeedbackFormDialogState extends State<FeedbackFormDialog> {
               controller: emailController,
               decoration: InputDecoration(
                 hintText: 'Email Address',
+                hintStyle: const TextStyle(color: Colors.white38),
                 filled: true,
                 fillColor: Colors.white12,
                 contentPadding: const EdgeInsets.symmetric(
@@ -650,6 +709,7 @@ class _FeedbackFormDialogState extends State<FeedbackFormDialog> {
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'E.g., I found a bug... / It would be great if...',
+                hintStyle: const TextStyle(color: Colors.white38),
                 filled: true,
                 fillColor: Colors.white12,
                 border: OutlineInputBorder(

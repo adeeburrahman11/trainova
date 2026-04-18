@@ -3,26 +3,26 @@ import 'package:intl/intl.dart';
 import '../models/workout.dart';
 import '../state/workout_state.dart';
 
-class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({super.key});
+class FavouritesScreen extends StatelessWidget {
+  const FavouritesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Workout History', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Favourite Workouts', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: ListenableBuilder(
         listenable: WorkoutState.instance,
         builder: (context, _) {
-          final history = WorkoutState.instance.history;
+          final favorites = WorkoutState.instance.favoriteWorkouts;
 
-          if (history.isEmpty) {
+          if (favorites.isEmpty) {
             return const Center(
               child: Text(
-                'No workout history yet.\nStart logging in the Track tab!',
+                'No favourite workouts yet.\nStar your best sessions in the History tab!',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white54, fontSize: 18),
               ),
@@ -31,9 +31,9 @@ class HistoryScreen extends StatelessWidget {
 
           return ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: history.length,
+            itemCount: favorites.length,
             itemBuilder: (context, index) {
-              final session = history[index];
+              final session = favorites[index];
               return _buildHistoryCard(context, session);
             },
           );
@@ -60,7 +60,7 @@ class HistoryScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
