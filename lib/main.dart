@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'services/update_service.dart';
 
 import 'screens/dashboard_screen.dart';
 import 'screens/track_screen.dart';
@@ -12,6 +13,8 @@ import 'state/workout_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await UpdateService.init();
+  UpdateService.checkForUpdatesBg();
   await WorkoutState.instance.loadState();
   runApp(const TrainovaApp());
 }
