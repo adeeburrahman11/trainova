@@ -90,13 +90,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _gender,
-                        dropdownColor: const Color(0xFF1E1E1E),
+                        dropdownColor: Theme.of(context).colorScheme.surface,
                         isExpanded: true,
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16),
                         items: ['Male', 'Female', 'Other'].map((String value) {
@@ -140,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         labelText: label,
         labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
         filled: true,
-        fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
+        fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
       ),
     );

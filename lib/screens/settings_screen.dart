@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final latestVersion = data['tag_name'].toString().replaceAll('v', '');
-        final releaseUrl = data['html_url'];
+        final releaseUrl = 'https://github.com/adeeburrahman11/trainova/releases/download/${data['tag_name']}/Trainova.apk';
         
         String currentVersion = '1.0.0';
         try {
@@ -43,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: () async {
                   Navigator.pop(context);
                   final url = Uri.parse(releaseUrl);
-                  if (await canLaunchUrl(url)) await launchUrl(url);
+                  if (await canLaunchUrl(url)) await launchUrl(url, mode: LaunchMode.externalApplication);
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
                 child: Text('Download', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
